@@ -84,13 +84,19 @@ fn main() {
         vendor.to_str().unwrap(),
         "-fvisibility=default",
     ];
-
+    let mut bindflags_args = Vec::new();
     // Set correct target triple for bindgen when cross-compiling
     let target = env::var("TARGET").expect("Cargo build scripts always have TARGET");
     let host = env::var("HOST").expect("Cargo build scripts always have HOST");
     if target != host {
-        cc_args.push("-target");
-        cc_args.push(target.as_str());
+        if let Some(extra_args) = env::var("BINDFLAGS").ok() {
+            extra_args.split_whitespace().for_each(|v| {
+                bindflags_args.push(v.to_owned());
+            })
+        } else {
+            cc_args.push("-target");
+            cc_args.push(target.as_str());
+        }
     }
 
     let mut additional_args = Vec::new();
@@ -124,6 +130,7 @@ fn main() {
         .ctypes_prefix("cty")
         .clang_args(&cc_args)
         .clang_args(&additional_args)
+        .clang_args(&bindflags_args)
         .generate()
         .expect("Unable to generate bindings");
 
