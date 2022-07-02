@@ -76,6 +76,14 @@ fn main() {
         .include(&lv_config_dir)
         .compile("lvgl");
 
+    if let Some(compiler) = env::var("LVGL_CC").ok() {
+        cfg.compiler(compiler);
+    }
+
+    if let Some(target) = env::var("LVGL_TARGET").ok() {
+        cfg.target(target.as_str());
+    }
+
     let mut cc_args = vec![
         "-DLV_CONF_INCLUDE_SIMPLE=1",
         "-I",
