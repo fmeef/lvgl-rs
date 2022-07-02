@@ -93,7 +93,7 @@ fn main() {
             extra_args.split_whitespace().for_each(|v| {
                 // Bindgen appears to have special handling of options
                 // beginning with the literal "--target="
-                bindflags_args.push(format!("--target={}", v));
+                bindflags_args.push(v.to_string());
             })
         } else {
             cc_args.push("-triple");
