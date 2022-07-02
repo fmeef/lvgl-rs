@@ -104,7 +104,7 @@ fn main() {
                 bindflags_args.push(v.to_string());
             })
         } else {
-            cc_args.push("-triple");
+            cc_args.push("-target");
             cc_args.push(target.as_str());
         }
     }
@@ -138,7 +138,6 @@ fn main() {
         .use_core()
         .rustfmt_bindings(true)
         .ctypes_prefix("cty")
-        .target_override("rv32imc")
         .clang_args(&bindflags_args)
         .clang_args(&cc_args)
         .clang_args(&additional_args)
