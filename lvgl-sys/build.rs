@@ -91,10 +91,12 @@ fn main() {
     if target != host {
         if let Some(extra_args) = env::var("BINDFLAGS").ok() {
             extra_args.split_whitespace().for_each(|v| {
-                bindflags_args.push(v.to_owned());
+                // Bindgen appears to have special handling of options
+                // beginning with the literal "--target="
+                bindflags_args.push(format!("--target={}", v));
             })
         } else {
-            cc_args.push("-target");
+            cc_args.push("-triple");
             cc_args.push(target.as_str());
         }
     }
@@ -128,9 +130,10 @@ fn main() {
         .use_core()
         .rustfmt_bindings(true)
         .ctypes_prefix("cty")
+        .target_override("rc32imc")
+        .clang_args(&bindflags_args)
         .clang_args(&cc_args)
         .clang_args(&additional_args)
-        .clang_args(&bindflags_args)
         .generate()
         .expect("Unable to generate bindings");
 
