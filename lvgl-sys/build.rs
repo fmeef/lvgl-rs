@@ -69,13 +69,6 @@ fn main() {
     add_c_files(&mut cfg, &lv_config_dir);
     add_c_files(&mut cfg, &shims_dir);
 
-    cfg.define("LV_CONF_INCLUDE_SIMPLE", Some("1"))
-        .include(&vendor_src)
-        .include(&vendor)
-        .warnings(false)
-        .include(&lv_config_dir)
-        .compile("lvgl");
-
     if let Some(compiler) = env::var("LVGL_CC").ok() {
         cfg.compiler(compiler);
     }
@@ -83,6 +76,13 @@ fn main() {
     if let Some(target) = env::var("LVGL_TARGET").ok() {
         cfg.target(target.as_str());
     }
+
+    cfg.define("LV_CONF_INCLUDE_SIMPLE", Some("1"))
+        .include(&vendor_src)
+        .include(&vendor)
+        .warnings(false)
+        .include(&lv_config_dir)
+        .compile("lvgl");
 
     let mut cc_args = vec![
         "-DLV_CONF_INCLUDE_SIMPLE=1",
@@ -138,7 +138,7 @@ fn main() {
         .use_core()
         .rustfmt_bindings(true)
         .ctypes_prefix("cty")
-        .target_override("rc32imc")
+        .target_override("rv32imc")
         .clang_args(&bindflags_args)
         .clang_args(&cc_args)
         .clang_args(&additional_args)
